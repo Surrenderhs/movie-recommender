@@ -1,0 +1,13 @@
+obj/
+recommend
+*.dSYM/
+makecsv
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+main
+app
+*.o
+*.a
+*.out
