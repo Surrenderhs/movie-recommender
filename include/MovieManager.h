@@ -1,12 +1,14 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <unordered_map>
 #include "Movie.h"
 #include "BaseManager.h"
 
 class MovieManager : public BaseManager {
 private:
     std::vector<Movie> movies;
+    std::unordered_map<int, Movie*> movieIndex;  // id → Movie* 인덱스
 
 public:
     void addMovie();

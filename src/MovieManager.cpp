@@ -15,15 +15,13 @@ static bool readNumber(double& val) {
 }
 
 bool MovieManager::movieExists(int id) const {
-    for (const auto& m : movies)
-        if (m == id) return true;  // Movie::operator==(int) 활용
-    return false;
+    return movieIndex.count(id) > 0;
 }
 
 Movie* MovieManager::findMovie(int id) {
-    for (auto& m : movies)
-        if (m == id) return &m;
-    return nullptr;
+    auto it = movieIndex.find(id);
+    if (it == movieIndex.end()) return nullptr;
+    return it->second;
 }
 
 void MovieManager::addMovie() {
@@ -40,6 +38,7 @@ void MovieManager::addMovie() {
     if (!readNumber(year)) return;
 
     movies.push_back(Movie((int)id, title, genre, (int)year));
+    movieIndex[movies.back().getId()] = &movies.back();
     cout << "영화가 추가되었습니다." << endl;
 }
 
@@ -96,6 +95,10 @@ void MovieManager::loadFromFile(const std::string& filename) {
         getline(ss, token, ','); // rating 무시
         movies.push_back(Movie(id, title, genre, year));
     }
+    // 인덱스 재구성
+    movieIndex.clear();
+    for (auto& m : movies)
+        movieIndex[m.getId()] = &m;
     file.close();
     std::cout << "파일 로드 완료: " << filename << " (" << movies.size() << "건)" << std::endl;
 }

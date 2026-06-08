@@ -6,6 +6,8 @@
 
 using namespace std;
 
+const vector<Rating> RatingManager::emptyRatings;  // findByUser 미스 시 반환용
+
 static bool readNumber(double& val) {
     cin >> val;
     if (cin.fail()) { cin.clear(); cin.ignore(MovieConstants::INPUT_BUFFER_SIZE, '\n'); return false; }
@@ -35,6 +37,7 @@ void RatingManager::addRating() {
     if (!readNumber(score)) return;
 
     ratings.push_back(Rating((int)uId, (int)mId, score));
+    ratingsByUser[(int)uId].push_back(Rating((int)uId, (int)mId, score));
 
     Movie* movie = movieManager->findMovie((int)mId);
     if (movie) movie->addRating(score);
@@ -82,6 +85,7 @@ void RatingManager::loadFromFile(const string& filename) {
         getline(ss, token, ','); score   = stod(token);
 
         ratings.push_back(Rating(userId, movieId, score));
+        ratingsByUser[userId].push_back(Rating(userId, movieId, score));
 
         // Movie 객체에 평점 반영
         if (movieManager) {
@@ -93,11 +97,16 @@ void RatingManager::loadFromFile(const string& filename) {
     cout << "파일 로드 완료: " << filename << " (" << ratings.size() << "건)" << endl;
 }
 
-vector<Rating> RatingManager::findByUser(int userId) const {
-    vector<Rating> result;
-    for (const auto& r : ratings)
-        if (r.getUserId() == userId) result.push_back(r);
-    return result;
+const vector<Rating>& RatingManager::findByUser(int userId) const {
+    auto it = ratingsByUser.find(userId);
+    if (it == ratingsByUser.end()) return emptyRatings;
+    return it->second;
+}
+
+int RatingManager::getRatingCountByUser(int userId) const {
+    auto it = ratingsByUser.find(userId);
+    if (it == ratingsByUser.end()) return 0;
+    return (int)it->second.size();
 }
 
 void RatingManager::saveToFile(const std::string& filename) const {
@@ -112,10 +121,4 @@ void RatingManager::saveToFile(const std::string& filename) const {
 
 int RatingManager::size() const {
     return (int)ratings.size();
-}
-int RatingManager::getRatingCountByUser(int userId) const {
-    int count = 0;
-    for (const auto& r : ratings)
-        if (r.getUserId() == userId) count++;
-    return count;
 }

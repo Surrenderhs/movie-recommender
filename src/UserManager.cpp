@@ -14,9 +14,7 @@ static bool readNumber(double& val) {
 }
 
 bool UserManager::userExists(int id) const {
-    for (const auto& u : users)
-        if (u == id) return true;  // User::operator==(int) 활용
-    return false;
+    return userIndex.count(id) > 0;
 }
 
 void UserManager::addUser() {
@@ -31,6 +29,7 @@ void UserManager::addUser() {
     cout << "이메일: "; getline(cin, email);
 
     users.push_back(User((int)id, name, email));
+    userIndex[users.back().getId()] = &users.back();
     cout << "사용자가 추가되었습니다." << endl;
 }
 
@@ -58,6 +57,10 @@ void UserManager::loadFromFile(const string& filename) {
         getline(ss, token, ','); // age 무시
         users.push_back(User(id, name, ""));
     }
+    // 인덱스 재구성
+    userIndex.clear();
+    for (auto& u : users)
+        userIndex[u.getId()] = &u;
     file.close();
     cout << "파일 로드 완료: " << filename << " (" << users.size() << "건)" << endl;
 }
@@ -76,12 +79,12 @@ int UserManager::size() const {
     return (int)users.size();
 }
 
-vector<User> UserManager::getAllUsers() const {
+const vector<User>& UserManager::getAllUsers() const {
     return users;
 }
 
 User* UserManager::findUserById(int id) {
-    for (auto& u : users)
-        if (u == id) return &u;
-    return nullptr;
+    auto it = userIndex.find(id);
+    if (it == userIndex.end()) return nullptr;
+    return it->second;
 }
