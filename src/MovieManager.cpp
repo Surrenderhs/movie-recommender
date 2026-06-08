@@ -42,21 +42,36 @@ void MovieManager::addMovie() {
     cout << "영화가 추가되었습니다." << endl;
 }
 
+// 문자열을 소문자로 변환하는 헬퍼
+static string toLower(const string& s) {
+    string result = s;
+    transform(result.begin(), result.end(), result.begin(), ::tolower);
+    return result;
+}
+
 void MovieManager::searchMovie() const {
     if (movies.empty()) { cout << "등록된 영화가 없습니다." << endl; return; }
 
     string keyword;
-    cout << "검색할 제목: ";
+    cout << "검색어 (제목 또는 장르): ";
     getline(cin, keyword);
 
-    bool found = false;
-    for (const auto& m : movies) {
-        if (m.getTitle().find(keyword) != string::npos) {
-            cout << m << endl;  // Movie::operator<< 활용
-            found = true;
-        }
+    string keyLower = toLower(keyword);
+
+    vector<Movie> result;
+    copy_if(movies.begin(), movies.end(), back_inserter(result),
+        [&](const Movie& m) {
+            return toLower(m.getTitle()).find(keyLower) != string::npos
+                || toLower(m.getGenre()).find(keyLower) != string::npos;
+        });
+
+    if (result.empty()) {
+        cout << "검색 결과가 없습니다." << endl;
+        return;
     }
-    if (!found) cout << "검색 결과가 없습니다." << endl;
+    cout << "\n[ 검색 결과: " << result.size() << "건 ]" << endl;
+    for (const auto& m : result)
+        cout << m << endl;
 }
 
 void MovieManager::displayAllMovies() const {
