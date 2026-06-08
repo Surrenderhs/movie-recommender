@@ -16,7 +16,7 @@ int main() {
     um.loadFromFile("data/users.csv");
     rm.loadFromFile("data/ratings.csv");
 
-    Recommender rec(mm, rm);
+    Recommender rec(mm, rm, um);
     int choice;
 
     while (true) {

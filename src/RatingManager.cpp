@@ -100,16 +100,6 @@ vector<Rating> RatingManager::findByUser(int userId) const {
     return result;
 }
 
-vector<int> RatingManager::getAllUserIds() const {
-    vector<int> ids;
-    for (const auto& r : ratings) {
-        bool exists = false;
-        for (int id : ids)
-            if (id == r.getUserId()) { exists = true; break; }
-        if (!exists) ids.push_back(r.getUserId());
-    }
-    return ids;
-}
 void RatingManager::saveToFile(const std::string& filename) const {
     std::ofstream file(filename);
     if (!file.is_open()) { std::cout << "파일을 열 수 없습니다: " << filename << std::endl; return; }

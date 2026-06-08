@@ -24,6 +24,5 @@ public:
     int size() const override;
 
     std::vector<Rating> findByUser(int userId) const;
-    std::vector<int> getAllUserIds() const;
     int getRatingCountByUser(int userId) const;
 };
