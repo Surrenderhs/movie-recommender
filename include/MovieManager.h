@@ -18,6 +18,7 @@ public:
 
     bool movieExists(int id) const;
     Movie* findMovie(int id);
+    const std::vector<Movie>& getMovies() const;
 
     void loadFromFile(const std::string& filename) override;
     void saveToFile(const std::string& filename) const override;

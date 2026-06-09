@@ -14,6 +14,10 @@ static bool readNumber(double& val) {
     return true;
 }
 
+const vector<Movie>& MovieManager::getMovies() const {
+    return movies;
+}
+
 bool MovieManager::movieExists(int id) const {
     return movieIndex.count(id) > 0;
 }

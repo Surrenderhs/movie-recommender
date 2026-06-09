@@ -3,6 +3,7 @@
 #include "UserManager.h"
 #include "RatingManager.h"
 #include "Recommender.h"
+#include "Statistics.h"
 #include "MovieConstants.h"
 using namespace std;
 
@@ -17,6 +18,7 @@ int main() {
     rm.loadFromFile("data/ratings.csv");
 
     Recommender rec(mm, rm, um);
+    Statistics  stat(mm, rm, um);
     int choice;
 
     while (true) {
@@ -25,7 +27,8 @@ int main() {
         cout << "3. 전체 영화 목록  4. 평점순 정렬" << endl;
         cout << "5. 사용자 추가     6. 전체 사용자 목록" << endl;
         cout << "7. 평점 입력       8. 영화별 평점 보기" << endl;
-        cout << "9. 영화 추천 받기  0. 종료" << endl;
+        cout << "9. 영화 추천 받기  10. 통계 보기" << endl;
+        cout << "0. 종료" << endl;
         cout << "선택: ";
         cin >> choice;
         if (cin.fail()) { cin.clear(); cin.ignore(MovieConstants::INPUT_BUFFER_SIZE, '\n'); continue; }
@@ -45,7 +48,7 @@ int main() {
             case 4: mm.sortByRating(); break;
             case 5: um.addUser(); break;
             case 6: {
-                vector<User> users = um.getAllUsers();
+                const auto& users = um.getAllUsers();
                 if (users.empty()) { cout << "등록된 사용자가 없습니다." << endl; break; }
                 cout << "\n[ 전체 사용자 목록 ]" << endl;
                 for (const auto& u : users)
@@ -67,6 +70,7 @@ int main() {
                 if (result.empty()) cout << "추천할 영화가 없습니다." << endl;
                 break;
             }
+            case 10: stat.display(); break;
             default: cout << "잘못된 입력입니다." << endl;
         }
     }
